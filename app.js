@@ -12,6 +12,7 @@ const xssClean = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 //My modules
 const AppError = require('./utils/appError');
@@ -33,6 +34,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Global MIDLEWARES
+// implement CORS
+app.use(cors());
+
+app.options('*', cors());
+// app.options('/api/v1/tours/:id', cors())
+
 // using helmet as a middleware to set http headers
 app.use(helmet()); // we can also add some options
 
