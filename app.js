@@ -1,4 +1,4 @@
-//core modules
+//core node modules
 const path = require('path');
 
 //3rd party moduls
