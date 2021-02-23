@@ -14,15 +14,15 @@ const signToken = (id) => {
   });
 };
 
-const createSendToken = (user, statusCode, res, maskUser = false) => {
+const createSendToken = (req, user, statusCode, res, maskUser = false) => {
   const token = signToken(user._id);
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true
+    httpOnly: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
   };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   res.cookie('jwt', token, cookieOptions);
   user.password = undefined;
@@ -44,7 +44,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
   });
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome();
-  createSendToken(newUser, 201, res, false);
+  createSendToken(req, newUser, 201, res, false);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -64,7 +64,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('incorrect email or password', 401));
   }
   // 3. generate token and send it to user
-  createSendToken(user, 200, res, true);
+  createSendToken(req, user, 200, res, true);
 });
 
 exports.logout = (req, res) => {
@@ -238,7 +238,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // 3. change the passwordchangedAt property
 
   // 4. log the user in
-  createSendToken(user, 200, res, true);
+  createSendToken(req, user, 200, res, true);
 });
 
 module.exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -262,5 +262,5 @@ module.exports.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   // 4. log the user again with the new password.
-  createSendToken(user, 200, res);
+  createSendToken(req, user, 200, res);
 });
