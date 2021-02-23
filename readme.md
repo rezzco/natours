@@ -1,3 +1,3 @@
 # Natours Application
 
-Build using: node.js, express, mongoDB.
+Built using: node.js, express, mongoDB.
