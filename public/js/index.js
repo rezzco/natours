@@ -24,7 +24,6 @@ if (mapBox) {
 }
 
 if (loginForm) {
-  console.log('login');
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
@@ -34,7 +33,6 @@ if (loginForm) {
   });
 }
 if (signupForm) {
-  console.log('signup');
   signupForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('name').value;
